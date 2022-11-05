@@ -24,3 +24,21 @@ func (rp *Repository) SchedulePickup(req dto.PostSchedulePickRP) error {
 		Time:          req.Time,
 	}).Error
 }
+
+func (rp *Repository) GetScheduleListByName(req dto.GetScheduleListByNameRP) ([]dto.GetScheduleListResp, error) {
+	dataDb := []model.BookScheduleReturn{}
+	result := []dto.GetScheduleListResp{}
+	err := rp.db.Raw("select * from book_schedules where time=?", req.Time).Scan(&dataDb).Error
+
+	for _, ddb := range dataDb {
+		result = append(result, dto.GetScheduleListResp{
+			Id:            ddb.ID,
+			Title:         ddb.Title,
+			Author:        ddb.Author,
+			EditionNumber: ddb.EditionNumber,
+			Time:          ddb.Time,
+		})
+	}
+
+	return result, err
+}

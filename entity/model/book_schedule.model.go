@@ -9,7 +9,15 @@ type BookSchedule struct {
 	Title         string `gorm:"index"`
 	Author        string
 	EditionNumber int
-	Time          time.Time
+	Time          string
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
+}
+
+type BookScheduleReturn struct {
+	ID            uint   `gorm:"primaryKey"`
+	Title         string `gorm:"index"`
+	Author        string
+	EditionNumber int
+	Time          string
 }

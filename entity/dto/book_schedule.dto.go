@@ -1,7 +1,5 @@
 package dto
 
-import "time"
-
 type DataResp struct {
 	Data interface{} `json:"data"`
 }
@@ -31,12 +29,32 @@ type PostSchedulePickUC struct {
 	Title         string
 	Author        string
 	EditionNumber int
-	Time          time.Time
+	Time          string
 }
 
 type PostSchedulePickRP struct {
 	Title         string
 	Author        string
 	EditionNumber int
-	Time          time.Time
+	Time          string
+}
+
+type GetScheduleListReq struct {
+	Time string `query:"time"`
+}
+
+type GetScheduleListUC struct {
+	Time string
+}
+
+type GetScheduleListByNameRP struct {
+	Time string
+}
+
+type GetScheduleListResp struct {
+	Id            uint   `json:"id"`
+	Title         string `json:"title"`
+	Author        string `json:"author"`
+	EditionNumber int    `json:"editionNumber"`
+	Time          string `json:"time"`
 }

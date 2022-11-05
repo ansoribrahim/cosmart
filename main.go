@@ -42,6 +42,7 @@ func main() {
 	// Routes
 	e.GET("/books", ctrl.GetListOfBook)
 	e.POST("/schedule-pickup", ctrl.SchedulePickup)
+	e.GET("/schedule-pickup", ctrl.ScheduleList)
 
 	port := ":8080"
 

@@ -53,3 +53,14 @@ func (uc *UseCase) SchedulePickup(req dto.PostSchedulePickUC) error {
 
 	return nil
 }
+
+func (uc *UseCase) ScheduleList(req dto.GetScheduleListUC) ([]dto.GetScheduleListResp, error) {
+	result, err := uc.bsRP.GetScheduleListByName(dto.GetScheduleListByNameRP{
+		Time: req.Time,
+	})
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
