@@ -2,9 +2,10 @@
 
 how to run :
 
-1. make sure host in .env file same as you ip, or you can use localhost
+1. make sure host in .env file same as your ip, or you can use localhost
 2. make sure you have docker installed
-3. run docker-compose up
+3. execute "docker-compose up"
+4. execute "go run main.go"
 
 
 list of api :
