@@ -1,35 +1,63 @@
 package main
 
 import (
-	"log"
-	"net/http"
+	"cosmart/controller"
+	"cosmart/entity/model"
+	"cosmart/repository"
+	"cosmart/usecase"
+	"fmt"
+	"github.com/joho/godotenv"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"os"
-
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
 )
 
 func main() {
-	port := "8080"
 
-	if fromEnv := os.Getenv("PORT"); fromEnv != "" {
-		port = fromEnv
+	godotenv.Load(".env")
+
+	e := echo.New()
+
+	// Middleware
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+
+	dsn := fmt.Sprintf(`host=%s user=postgres password=postgres dbname=book_schedule port=5432 sslmode=disable TimeZone=Asia/Shanghai`, os.Getenv("HOST"))
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic(err)
 	}
 
-	log.Printf("Starting up on http://localhost:%s", port)
+	err = DbInit(db)
+	if err != nil {
+		panic(err)
+	}
 
-	r := chi.NewRouter()
+	rp := repository.New(db)
+	uc := usecase.New(rp)
+	ctrl := controller.New(uc)
 
-	r.Use(middleware.Logger)
+	// Routes
+	e.GET("/books", ctrl.GetListOfBook)
+	e.POST("/schedule-pickup", ctrl.SchedulePickup)
 
-	r.Get("/", getListOfBook)
-	r.Post("/posts", schedulePickup)
+	port := ":8080"
 
-	log.Fatal(http.ListenAndServe(":"+port, r))
+	e.Logger.Fatal(e.Start(port))
 }
 
-func getListOfBook(w http.ResponseWriter, r *http.Request) {
-}
+func DbInit(db *gorm.DB) error {
 
-func schedulePickup(w http.ResponseWriter, r *http.Request) {
+	tableFound := db.Migrator().HasTable(&model.BookSchedule{})
+
+	if !tableFound {
+		err := db.Migrator().CreateTable(&model.BookSchedule{})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
